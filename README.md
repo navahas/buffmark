@@ -49,7 +49,7 @@ Or just copy `lua/buffmark.lua` to your `~/.config/nvim/lua/` directory, adding 
 ```lua
 local buffmark = require('buffmark')
 
--- Setup with toggle key (automatically creates the keymap)
+-- Setup with key to toggle (open/close) the bookmark list
 buffmark.setup({
     toggle_key = "<leader>bl"
 })

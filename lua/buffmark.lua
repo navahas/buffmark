@@ -131,11 +131,7 @@ function M.list()
     vim.api.nvim_set_hl(0, "FloatFooter", { fg = "#7A7A7A", bg = "NONE" })
 
     -- Build footer based on config
-    local quit_keys = "q"
-    if config.toggle_key then
-        quit_keys = quit_keys .. " or " .. config.toggle_key
-    end
-    local footer_text = " " .. quit_keys .. ": quit • r: replace • dd: delete • <CR>: jump "
+    local footer_text = " q: quit • r: replace • dd: delete • <CR>: jump "
 
     -- Position right above status line (bottom of screen)
     local win = vim.api.nvim_open_win(buf, true, {
