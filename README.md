@@ -1,18 +1,23 @@
 <div align="center">
     <img alt="buffmark" height="140" src="/assets/buffmark.png" />
+
+# buffmark
 </div>
 
-### Why [▮▮▮▯] buffmark
+### Why [▮▮▮▯][buff][mark]
 
 I like keeping things minimal, using built-ins instead of large plugins. (netrw user spoted here)
-Neovim already has bookmarks (global marks) for jumping between files, but they are stored in **shada**, a shared data file on disk.
 
+Neovim already has bookmarks (global marks) for jumping between files, but they are stored in **shada**, a shared data file on disk.
 That means marks are global and persistent across sessions, which is not ideal when you just want quick, temporary pins.
 
-You could use **[Harpoon](https://github.com/ThePrimeagen/harpoon/tree/harpoon2)**, but it is larger, persistent, and feature-rich. If that suits you, go for it. This script is a few lines of Lua that keep bookmarks only in memory, simple and local, and gone when you quit Neovim.
+You could use **[Harpoon](https://github.com/ThePrimeagen/harpoon/tree/harpoon2)** which is larger, persistent, and feature-rich. If that suits you, go for it. This script is a few lines of Lua that keep bookmarks only in memory, simple and local, and gone when you quit.
 
-It is not meant to grow or be configurable beyond its four-bookmark limit. 
+It is not meant to grow or be configurable beyond its four-bookmark limit.<br>
 It remains light, simple, and quietly useful.
+```
+[▮▮▮▯][buff][mark][buff][▮▮▮▯][mark][▮▮▮▯][mark][buff][▮▮▮▯][buff][mark][buff][▮▮▮▯][mark][▮▮▮▯][mark][buff]
+```
 
 ## Installation
 
@@ -60,18 +65,13 @@ vim.keymap.set("n", "<leader>bc", buffmark.clear, { desc = "Bookmark clear" })
 
 ## Usage
 
-Available functions:
-- `buffmark.add()` — bookmark current buffer
-- `buffmark.jump(i)` — jump to bookmark slot i (1-4)
-- `buffmark.list()` — toggle bookmark list popup
-- `buffmark.remove(i)` — remove bookmark at slot i
-- `buffmark.clear()` — clear all bookmarks
+* `buffmark.add()` — add current buffer
+* `buffmark.jump(i)` — jump to slot *i* (1–4)
+* `buffmark.list()` — toggle popup
+* `buffmark.remove(i)` — remove slot *i*
+* `buffmark.clear()` — clear all
 
-Inside the popup:
-- `<CR>` — jump to selected bookmark
-- `r` — replace selected slot with current buffer
-- `dd` — delete bookmark
-- `q` (or your toggle_key) — close popup
+In the popup: `<CR>` jump · `r` replace · `dd` delete · `q` or toggle key to close
 
 ## Contributions
 
@@ -88,3 +88,4 @@ If you have a minimal idea that fits the same spirit, open an issue. I would lov
 ---
 
 That's all folks.
+*Stay light. Stay focused.*
