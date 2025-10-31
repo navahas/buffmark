@@ -1,10 +1,8 @@
 <div align="center">
-    <img alt="buffmark" height="280" src="/assets/buffmark.png" />
-
-# [▮▮▮▯]buffmark
+    <img alt="buffmark" height="140" src="/assets/buffmark.png" />
 </div>
 
-### Why?
+### Why [▮▮▮▯] buffmark
 
 I like keeping things minimal, using built-ins instead of large plugins. (netrw user spoted here)
 Neovim already has bookmarks (global marks) for jumping between files, but they are stored in **shada**, a shared data file on disk.
@@ -13,7 +11,8 @@ That means marks are global and persistent across sessions, which is not ideal w
 
 You could use **[Harpoon](https://github.com/ThePrimeagen/harpoon/tree/harpoon2)**, but it is larger, persistent, and feature-rich. If that suits you, go for it. This script is a few lines of Lua that keep bookmarks only in memory, simple and local, and gone when you quit Neovim.
 
-It is not meant to grow or be configurable beyond its four-bookmark limit. It stays light, does one thing, and stays out of the way.
+It is not meant to grow or be configurable beyond its four-bookmark limit. 
+It remains light, simple, and quietly useful.
 
 ## Installation
 
@@ -76,13 +75,15 @@ Inside the popup:
 
 ## Contributions
 
-If you want to tweak or extend it, fork or copy it. Contributions that simplify or refine the existing logic are welcome.
+Contributions that simplify or refine the existing logic are welcome. If you want to tweak it much further or extend it, fork or copy it.
 
 If you have a minimal idea that fits the same spirit, open an issue. I would love to hear it and might add it, or encourage you to do so. I am also open to keeping dedicated branches for ideas that some might enjoy but do not fit my use case.
 
 **Ideas not pursued** (but you might want to try):
-- **Quickfix integration**: Add bookmarks to a quickfix list for batch navigation
-- **Editable mark list**: Allow editing the popup like Harpoon does. This is trickier since marks are in-memory, not file-backed. You would need to generate a temp file, let the user edit it, then parse and rebuild the bookmark list (or hook into buffer close to call `buffmark.clear()` and re-add in the new order)
+- **Quickfix integration**
+> Add bookmarks to a quickfix list for batch navigation
+- **Editable mark list**
+> Allow editing the popup buffer like Harpoon does. This is trickier since buffmarks are in-memory, not file-backed. You would need to generate a temp file, let the user edit it, then parse and rebuild the bookmark list (or hook into buffer close to call `buffmark.clear()` and re-add in the new order)
 
 ---
 
