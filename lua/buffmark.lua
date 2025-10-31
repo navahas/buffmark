@@ -136,6 +136,7 @@ function M.list()
 
     -- Dim the footer text
     vim.api.nvim_set_hl(0, "FloatFooter", { fg = "#7A7A7A", bg = "NONE" })
+    vim.api.nvim_set_hl(0, "FloatTitle", { fg = "#7A7A7A", bg = "NONE" })
 
     -- Build footer based on config
     local footer_text = " 1-4: jump • r: replace • dd: delete • q: quit "
@@ -146,14 +147,13 @@ function M.list()
         style = "minimal",
         border = "rounded",
         title = " [▮▮▮▯][buff][mark] ",
-        title_pos = "right",
+        title_pos = "center",
         footer = footer_text,
         footer_pos = "center",
         width = width,
         height = height,
-        row = vim.o.lines - height - 4, -- Right above status line
-        col = 0
-        -- col = math.floor((vim.o.columns - width) / 2),  -- Center horizontally
+        row = math.floor((vim.o.lines - height) / 3),
+        col = math.floor((vim.o.columns - width) / 2),
     })
 
     vim.wo[win].cursorline = true

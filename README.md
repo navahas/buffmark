@@ -4,6 +4,10 @@
 # buffmark
 </div>
 
+<p align="center">
+    <img src="/assets/showcase.gif" alt="buffmark showcase" />
+</p>
+
 ### Why [▮▮▮▯][buff][mark]
 
 I like keeping things minimal, using built-ins instead of large plugins. (netrw user spoted here)
