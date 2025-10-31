@@ -66,6 +66,12 @@ function M.add(slot)
 end
 
 function M.jump(i)
+    -- Prevent jumping from inside the popup
+    -- Using buffer-local flag instead of checking buftype == "nofile"
+    -- to avoid blocking legitimate jumps from other nofile buffers
+    if vim.b.buffmark_popup then
+        return
+    end
     local name = bookmarks[i]
     if not name then
         print_timed("No bookmark at [" .. i .. "]")
@@ -115,6 +121,7 @@ function M.list()
     vim.bo[buf].buftype = "nofile"
     vim.bo[buf].bufhidden = "wipe"
     vim.bo[buf].modifiable = false
+    vim.b[buf].buffmark_popup = true
 
     -- Calculate dimensions
     local height = #lines + 1
@@ -131,7 +138,7 @@ function M.list()
     vim.api.nvim_set_hl(0, "FloatFooter", { fg = "#7A7A7A", bg = "NONE" })
 
     -- Build footer based on config
-    local footer_text = " q: quit • r: replace • dd: delete • <CR>: jump "
+    local footer_text = " 1-4: jump • r: replace • dd: delete • q: quit "
 
     -- Position right above status line (bottom of screen)
     local win = vim.api.nvim_open_win(buf, true, {
@@ -173,6 +180,16 @@ function M.list()
             M.jump(idx)
         end
     end, { buffer = buf, silent = true })
+
+    -- Direct jump with number keys (1-4) without navigating
+    for i = 1, 4 do
+        vim.keymap.set("n", tostring(i), function()
+            if bookmarks[i] then
+                vim.cmd("close")
+                M.jump(i)
+            end
+        end, { buffer = buf, silent = true })
+    end
 
     -- dd to delete current slot
     vim.keymap.set("n", "dd", function()

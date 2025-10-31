@@ -51,16 +51,22 @@ local buffmark = require('buffmark')
 
 -- Setup with key to toggle (open/close) the bookmark list
 buffmark.setup({
-    toggle_key = "<leader>bl"
+    toggle_key = "<leader>l"
 })
 
--- Set your other keymaps
+-- Set your other keymaps at wish
 vim.keymap.set("n", "<leader>a", buffmark.add, { desc = "Bookmark add" })
+vim.keymap.set("n", "<leader>bc", buffmark.clear, { desc = "Bookmark clear" })
+-- Set jump keymaps
 vim.keymap.set("n", "<leader>1", function() buffmark.jump(1) end, { desc = "Bookmark 1" })
 vim.keymap.set("n", "<leader>2", function() buffmark.jump(2) end, { desc = "Bookmark 2" })
 vim.keymap.set("n", "<leader>3", function() buffmark.jump(3) end, { desc = "Bookmark 3" })
 vim.keymap.set("n", "<leader>4", function() buffmark.jump(4) end, { desc = "Bookmark 4" })
-vim.keymap.set("n", "<leader>bc", buffmark.clear, { desc = "Bookmark clear" })
+-- Another handy option could be
+-- vim.keymap.set("n", "<C-h>", function() buffmark.jump(1) end, { desc = "Bookmark 1" })
+-- vim.keymap.set("n", "<C-j>", function() buffmark.jump(2) end, { desc = "Bookmark 2" })
+-- vim.keymap.set("n", "<C-k>", function() buffmark.jump(3) end, { desc = "Bookmark 3" })
+-- vim.keymap.set("n", "<C-l>", function() buffmark.jump(4) end, { desc = "Bookmark 4" })
 ```
 
 ## Usage
@@ -71,7 +77,7 @@ vim.keymap.set("n", "<leader>bc", buffmark.clear, { desc = "Bookmark clear" })
 * `buffmark.remove(i)` — remove slot *i*
 * `buffmark.clear()` — clear all
 
-In the popup: `<CR>` jump · `r` replace · `dd` delete · `q` or toggle key to close
+In the popup: `1-4` or `<CR>` jump · `r` replace · `dd` delete · `q` or toggle key to close
 
 ## Contributions
 
