@@ -8,16 +8,16 @@
     <img src="/assets/showcase.gif" alt="buffmark showcase" />
 </p>
 
-### Why [▮▮▮▯][buff][mark]
+### Why [▮▮▮▯][buff][mark][0]
 
-I like keeping things minimal, using built-ins instead of large plugins. (netrw user spoted here)
+I like keeping things minimal, using built-ins instead of large plugins. (netrw user spotted here)
 
 Neovim already has bookmarks (global marks) for jumping between files, but they are stored in **shada**, a shared data file on disk.
 That means marks are global and persistent across sessions, which is not ideal when you just want quick, temporary pins.
 
 You could use **[Harpoon](https://github.com/ThePrimeagen/harpoon/tree/harpoon2)** which is larger, persistent, and feature-rich. If that suits you, go for it. This script is a few lines of Lua that keep bookmarks only in memory, simple and local, and gone when you quit.
 
-It is not meant to grow or be configurable beyond its four-bookmark limit.<br>
+It keeps four collections of four bookmarks each (16 total), letting you group files by context.<br>
 It remains light, simple, and quietly useful.
 ```
 [▮▮▮▯][buff][mark][buff][▮▮▮▯][mark][▮▮▮▯][mark][buff][▮▮▮▯][buff][mark][buff][▮▮▮▯][mark][▮▮▮▯][mark][buff]
@@ -81,7 +81,10 @@ vim.keymap.set("n", "<leader>4", function() buffmark.jump(4) end, { desc = "Book
 * `buffmark.remove(i)` — remove slot *i*
 * `buffmark.clear()` — clear all
 
-In the popup: `1-4` or `<CR>` jump · `r` replace · `dd` delete · `q` or toggle key to close
+All commands operate on the active collection (0–3). Collections are session-only, in memory.
+
+In the popup: `Tab` cycle collections · `1-4` or `<CR>` jump · `r` replace · `dd` delete · `q` or toggle key to close
+> Hint: Use `Shift+Tab` to cycle backward through collections
 
 ## Contributions
 

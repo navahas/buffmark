@@ -1,6 +1,12 @@
 local M = {}
 
-local bookmarks = {}
+local collections = {
+    [0] = {},
+    [1] = {},
+    [2] = {},
+    [3] = {}
+}
+local active_collection = 0
 local config = {
     toggle_key = nil -- will be set by user in setup()
 }
@@ -30,7 +36,7 @@ local function set_bookmark(slot, filename)
         print_timed("No file name")
         return
     end
-    bookmarks[slot] = filename
+    collections[active_collection][slot] = filename
     print_timed("Bookmark [" .. slot .. "] = " .. vim.fn.fnamemodify(filename, ":~:."))
 end
 
@@ -49,20 +55,20 @@ function M.add(slot)
     end
 
     -- avoid duplicates
-    for _, b in ipairs(bookmarks) do
+    for _, b in ipairs(collections[active_collection]) do
         if b == name then
             print_timed("Already bookmarked")
             return
         end
     end
 
-    if #bookmarks >= 4 then
+    if #collections[active_collection] >= 4 then
         print_timed("Max 4 bookmarks reached — replace one (open list and press r)", 2110)
         return
     end
 
-    table.insert(bookmarks, name)
-    print_timed("Bookmarked [" .. #bookmarks .. "]: " .. vim.fn.fnamemodify(name, ":~:."))
+    table.insert(collections[active_collection], name)
+    print_timed("Bookmarked [" .. #collections[active_collection] .. "]: " .. vim.fn.fnamemodify(name, ":~:."))
 end
 
 function M.jump(i)
@@ -72,7 +78,7 @@ function M.jump(i)
     if vim.b.buffmark_popup then
         return
     end
-    local name = bookmarks[i]
+    local name = collections[active_collection][i]
     if not name then
         print_timed("No bookmark at [" .. i .. "]")
         return
@@ -81,16 +87,16 @@ function M.jump(i)
 end
 
 function M.remove(i)
-    if not bookmarks[i] then
+    if not collections[active_collection][i] then
         print_timed("No bookmark at [" .. i .. "]")
         return
     end
-    table.remove(bookmarks, i)
+    table.remove(collections[active_collection], i)
     print_timed("Removed bookmark [" .. i .. "]")
 end
 
 function M.clear()
-    bookmarks = {}
+    collections[active_collection] = {}
     print_timed("All bookmarks cleared")
 end
 
@@ -101,19 +107,13 @@ function M.list()
 
     -- build lines (always 4 slots for consistency)
     local lines = {}
-    local has_any = false
     for i = 1, 4 do
-        local mark = bookmarks[i]
+        local mark = collections[active_collection][i]
         if mark then
-            has_any = true
             table.insert(lines, string.format("[%d] %s", i, vim.fn.fnamemodify(mark, ":~:.")))
         else
             table.insert(lines, string.format("[%d] — empty", i))
         end
-    end
-    if not has_any then
-        print_timed("No bookmarks")
-        return
     end
 
     local buf = vim.api.nvim_create_buf(false, true)
@@ -139,14 +139,26 @@ function M.list()
     vim.api.nvim_set_hl(0, "FloatTitle", { fg = "#7A7A7A", bg = "NONE" })
 
     -- Build footer based on config
-    local footer_text = " 1-4: jump • r: replace • dd: delete • q: quit "
+    local footer_text = " Tab: next • 1-4: jump • r: replace • dd: delete • q: quit "
+
+    local block_filled = "▮"
+    local block_empty = "▯"
+    local blocks = ""
+    for i = 1, 4 do
+        if collections[active_collection][i] then
+            blocks = blocks .. block_filled
+        else
+            blocks = blocks .. block_empty
+        end
+    end
+    local buff_title = " [" .. blocks .. "][buff][mark][" .. active_collection .. "] "
 
     -- Position right above status line (bottom of screen)
     local win = vim.api.nvim_open_win(buf, true, {
         relative = "editor",
         style = "minimal",
         border = "rounded",
-        title = " [▮▮▮▯][buff][mark] ",
+        title = buff_title,
         title_pos = "center",
         footer = footer_text,
         footer_pos = "center",
@@ -175,7 +187,7 @@ function M.list()
     -- <CR> to jump
     vim.keymap.set("n", "<CR>", function()
         local idx = tonumber(vim.api.nvim_get_current_line():match("%[(%d+)%]"))
-        if idx and bookmarks[idx] then
+        if idx and collections[active_collection][idx] then
             vim.cmd("close")
             M.jump(idx)
         end
@@ -184,7 +196,7 @@ function M.list()
     -- Direct jump with number keys (1-4) without navigating
     for i = 1, 4 do
         vim.keymap.set("n", tostring(i), function()
-            if bookmarks[i] then
+            if collections[active_collection][i] then
                 vim.cmd("close")
                 M.jump(i)
             end
@@ -207,7 +219,7 @@ function M.list()
         if not idx then return end
 
         -- Only allow replacing occupied slots
-        if not bookmarks[idx] then
+        if not collections[active_collection][idx] then
             print_timed("Cannot replace empty slot")
             return
         end
@@ -221,7 +233,7 @@ function M.list()
 
         -- if this file is already bookmarked, move it instead of duplicating
         local existing
-        for i, b in ipairs(bookmarks) do
+        for i, b in ipairs(collections[active_collection]) do
             if b == src_name then
                 existing = i
                 break
@@ -234,16 +246,31 @@ function M.list()
                 print_timed("Already at slot [" .. idx .. "]")
                 return
             end
-            bookmarks[existing], bookmarks[idx] = bookmarks[idx], bookmarks[existing]
+            local coll = collections[active_collection]
+            coll[existing], coll[idx] = coll[idx], coll[existing]
             print_timed("Moved bookmark to slot [" .. idx .. "]")
         else
             -- normal replace
-            bookmarks[idx] = src_name
+            collections[active_collection][idx] = src_name
             print_timed("Replaced slot [" .. idx .. "]")
         end
 
         vim.cmd("close")
         M.list() -- refresh view
+    end, { buffer = buf, silent = true })
+
+    -- Tab to cycle forward through collections (0—>1—>2—>3—>0)
+    vim.keymap.set("n", "<Tab>", function()
+        active_collection = (active_collection + 1) % 4
+        vim.cmd("close")
+        M.list() -- refresh with new collection
+    end, { buffer = buf, silent = true })
+
+    -- Shift+Tab to cycle backward through collections (0—>3—>2—>1—>0)
+    vim.keymap.set("n", "<S-Tab>", function()
+        active_collection = (active_collection - 1) % 4
+        vim.cmd("close")
+        M.list() -- refresh with new collection
     end, { buffer = buf, silent = true })
 end
 
